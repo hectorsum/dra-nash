@@ -3,13 +3,31 @@ import bcrypt from 'bcryptjs';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-// Simple connection for seeding - explicit config to avoid password parsing issues
+// Extract actual database URL from Prisma Postgres connection string
+function getDatabaseUrl(): string {
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error('DATABASE_URL is not defined');
+  
+  // Check if this is a Prisma Postgres URL with api_key
+  const urlObj = new URL(url);
+  const apiKey = urlObj.searchParams.get('api_key');
+  
+  if (apiKey) {
+    try {
+      const decoded = Buffer.from(apiKey, 'base64').toString('utf-8');
+      const config = JSON.parse(decoded);
+      return config.databaseUrl || url;
+    } catch (e) {
+      console.error('Failed to decode api_key, using original URL:', e);
+      return url;
+    }
+  }
+  
+  return url;
+}
+
 const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  user: 'postgres',
-  password: 'R8yg7gpd!',
-  database: 'dentist_portfolio',
+  connectionString: getDatabaseUrl(),
 });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
