@@ -6,6 +6,68 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  DOCTOR
+  PATIENT
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patient Patient?
+  doctor  Doctor?
+}
+
+model Patient {
+  id                String        @id @default(uuid())
+  userId            String        @unique
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Legacy field - kept for backward compatibility
+  phone             String?
+  
+  // New wizard fields - Step 1: Datos
+  documentType      String?       // DNI, Passport, etc.
+  documentNumber    String?
+  birthDate         DateTime?
+  
+  // New wizard fields - Step 2: Personal
+  firstName         String?
+  paternalSurname   String?       // Apellido Paterno
+  maternalSurname   String?       // Apellido Materno
+  gender            String?       // Masculino, Femenino, Otro
+  country           String?
+  address           String?
+  
+  // New wizard fields - Step 3: Seguridad
+  phoneCountryCode  String?       // e.g., "+51"
+  
+  appointments      Appointment[]
+  payments          Payment[]
+  clinicalRecords   ClinicalRecord[]
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Doctor {
+  id           String         @id @default(uuid())
+  userId       String         @unique
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialty    String?
+  phone        String?
+  appointments     Appointment[]
+  availability     Availability[]
+  clinicalRecords  ClinicalRecord[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
 model Service {
   id          String        @id @default(uuid())
   name        String
@@ -15,16 +77,6 @@ model Service {
   appointments Appointment[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-}
-
-model Patient {
-  id           String        @id @default(uuid())
-  name         String
-  email        String        @unique
-  phone        String?
-  appointments Appointment[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
 }
 
 enum AppointmentStatus {
@@ -40,13 +92,67 @@ model Appointment {
   endTime   DateTime
   status    AppointmentStatus @default(PENDING)
   notes     String?
+  paymentReceiptUrl String?
 
   patientId String
   patient   Patient @relation(fields: [patientId], references: [id])
 
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
   serviceId String
   service   Service @relation(fields: [serviceId], references: [id])
 
+  payment         Payment?
+  clinicalRecords ClinicalRecord[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Availability {
+  id          String   @id @default(uuid())
+  doctorId    String
+  doctor      Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int      // 0-6 where 0 is Sunday
+  time        String   // e.g., "09:00", "09:30", "14:00", "14:30"
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([doctorId, dayOfWeek, time])
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  amount        Decimal       @db.Decimal(10, 2)
+  status        PaymentStatus @default(PENDING)
+  appointmentId String        @unique
+  appointment   Appointment   @relation(fields: [appointmentId], references: [id])
+  patientId     String
+  patient       Patient       @relation(fields: [patientId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model ClinicalRecord {
+  id            String       @id @default(uuid())
+  patientId     String
+  patient       Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctorId      String
+  doctor        Doctor       @relation(fields: [doctorId], references: [id])
+  appointmentId String?
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+  date          DateTime
+  diagnosis     String
+  treatment     String
+  notes         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }

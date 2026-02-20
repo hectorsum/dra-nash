@@ -31,6 +31,20 @@ export default function BookingPage() {
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
   useEffect(() => {
+    // Check for authenticated user
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
+          setPatientDetails({
+            name: data.user.name,
+            email: data.user.email,
+            phone: data.user.phone || '',
+          });
+        }
+      })
+      .catch(err => console.error('Error checking auth:', err));
+
     // Fetch services
     fetch('/api/services')
       .then((res) => {

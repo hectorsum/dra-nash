@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
 import './globals.css';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
+import { ConditionalLayout } from '@/components/ConditionalLayout';
 
 const montserrat = Montserrat({ subsets: ['latin'] });
 
@@ -19,11 +18,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="scroll-smooth">
       <body className={montserrat.className}>
-        <Navbar />
-        <main className="min-h-screen pt-16">
-          {children}
-        </main>
-        <Footer />
+        <ConditionalLayout>{children}</ConditionalLayout>
       </body>
     </html>
   );
