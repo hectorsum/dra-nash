@@ -1,7 +1,7 @@
 import { jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { LayoutDashboard, Calendar, Users, Clock, Stethoscope } from 'lucide-react';
+import { LayoutDashboard, Calendar, Users, Clock, Stethoscope, FileText } from 'lucide-react';
 import { LogoutButton } from '@/components/LogoutButton';
 import Image from 'next/image';
 
@@ -32,6 +32,7 @@ export default async function DoctorLayout({
     { href: '/doctor/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
     { href: '/doctor/agenda', label: 'Mi agenda', icon: <Calendar size={20} /> },
     { href: '/doctor/pacientes', label: 'Pacientes', icon: <Users size={20} /> },
+    { href: '/doctor/presupuestos', label: 'Presupuestos', icon: <FileText size={20} /> },
     { href: '/doctor/disponibilidad', label: 'Disponibilidad', icon: <Clock size={20} /> },
     { href: '/doctor/servicios', label: 'Servicios', icon: <Stethoscope size={20} /> },
   ];

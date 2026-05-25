@@ -37,8 +37,10 @@ async function main() {
 
   // Create doctor user
   const hashedDoctorPassword = await bcrypt.hash('doctor123', 10);
-  const doctorUser = await prisma.user.create({
-    data: {
+  const doctorUser = await prisma.user.upsert({
+    where: { email: 'doctor@example.com' },
+    update: {},
+    create: {
       email: 'doctor@example.com',
       password: hashedDoctorPassword,
       name: 'Dra. Nayeli Orbegoso',
@@ -104,6 +106,10 @@ async function main() {
     }
   }
   
+  await prisma.availability.deleteMany({
+     where: { doctorId: doctorUser.doctor!.id }
+  });
+
   await prisma.availability.createMany({
     data: availabilityRecords,
   });
@@ -111,8 +117,10 @@ async function main() {
 
   // Create test patient (optional, for development)
   const hashedPatientPassword = await bcrypt.hash('patient123', 10);
-  const patientUser = await prisma.user.create({
-    data: {
+  const patientUser = await prisma.user.upsert({
+    where: { email: 'patient@example.com' },
+    update: {},
+    create: {
       email: 'patient@example.com',
       password: hashedPatientPassword,
       name: 'Juan Pérez',

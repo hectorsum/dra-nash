@@ -1,8 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --navy:      #1A1F3A;
+  --lavender:  #D4C5E5;
+  --lav-light: #F0EBF8;
+  --lav-mid:   #B8A5D4;
+  --body:      #2C3E50;
+  --muted:     #6B7A8D;
+  --bg:        #FAFAF8;
+  --white:     #FFFFFF;
+  --serif:     'Cormorant Garamond', Georgia, serif;
+  --sans:      'DM Sans', system-ui, sans-serif;
+  --background: var(--bg);
+  --foreground: var(--body);
 }
 
 @theme inline {
@@ -10,9 +21,31 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-primary: #071535;
+  --color-primary: #1A1F3A;
   --animate-hero-float-slow: hero-float-slow 8s ease-in-out infinite;
   --animate-hero-float-fast: hero-float-fast 5s ease-in-out infinite;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--body);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+input,
+select,
+textarea {
+  color: #000;
 }
 
 @keyframes hero-float-slow {
@@ -25,21 +58,17 @@
   50% { transform: translateY(-12px) scale(1.05); }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-input,
-select,
-textarea {
-  color: #000;
-}
+/* ── Utility classes used in redesign ── */
+.font-serif { font-family: var(--serif); }
+.font-sans  { font-family: var(--sans); }
+.text-navy  { color: var(--navy); }
+.text-lavender { color: var(--lavender); }
+.text-lav-mid  { color: var(--lav-mid); }
+.text-muted    { color: var(--muted); }
+.bg-navy       { background: var(--navy); }
+.bg-lav-light  { background: var(--lav-light); }

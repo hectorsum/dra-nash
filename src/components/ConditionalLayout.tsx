@@ -13,7 +13,7 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!isDashboardRoute && <Navbar />}
-      <main className={isDashboardRoute ? "min-h-screen" : "min-h-screen pt-16"}>
+      <main className="min-h-screen">
         {children}
       </main>
       {!isDashboardRoute && <Footer />}

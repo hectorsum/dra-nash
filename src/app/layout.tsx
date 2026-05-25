@@ -1,13 +1,10 @@
 import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
 import './globals.css';
 import { ConditionalLayout } from '@/components/ConditionalLayout';
 
-const montserrat = Montserrat({ subsets: ['latin'] });
-
 export const metadata: Metadata = {
-  title: 'DentalCare - Cuida tu sonrisa',
-  description: 'Clínica dental profesional. Agenda tu cita hoy.',
+  title: 'Dra. Nash — Odontología',
+  description: 'Odontología de excelencia. Cuidamos tu salud bucal con un enfoque humano, tecnología avanzada y años de experiencia a tu servicio.',
 };
 
 export default function RootLayout({
@@ -17,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="scroll-smooth">
-      <body className={montserrat.className}>
+      <body>
         <ConditionalLayout>{children}</ConditionalLayout>
       </body>
     </html>
